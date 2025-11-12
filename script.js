@@ -1,233 +1,196 @@
-/* =========================
-   LOGIN E CADASTRO
-   ========================= */
-document.addEventListener("DOMContentLoaded", () => {
-  const loginForm = document.getElementById("loginForm");
-  const cadastroForm = document.getElementById("cadastroForm");
-  const toggleTheme = document.getElementById("toggleTheme");
+// ===========================================================
+// ======== PORTAL LUMIÈRE DENTAL - APP.JS COMPLETO =========
+// ===========================================================
 
-  if (toggleTheme) {
-    toggleTheme.addEventListener("click", () => {
-      document.body.classList.toggle("light");
-    });
-  }
-
-  if (loginForm) {
-    loginForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const nome = loginForm.nome.value.trim();
-      if (nome) {
-        const usuario = { nome };
-        localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
-        window.location.href = "app.html";
-      }
-    });
-  }
-
-  if (cadastroForm) {
-    cadastroForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-      alert("Cadastro realizado com sucesso!");
-      window.location.href = "index.html";
-    });
-  }
-});
-
-/* =========================
-   APP PRINCIPAL
-   ========================= */
-document.addEventListener("DOMContentLoaded", () => {
-  const user = JSON.parse(localStorage.getItem("usuarioLogado"));
-  if (user) {
-    const nomeUser = document.getElementById("nomeUser");
-    if (nomeUser) nomeUser.textContent = user.nome;
-  }
-
-  const logout = document.getElementById("logout");
-  if (logout) {
-    logout.addEventListener("click", () => {
-      localStorage.removeItem("usuarioLogado");
-      window.location.href = "index.html";
-    });
-  }
-});
-
-/* =========================
-   CHATBOT — integração com agendamento
-   ========================= */
-(function initChatbot() {
-  const chatBox = document.getElementById("chatBox");
-  const enviarChat = document.getElementById("enviarChat");
-  const input = document.getElementById("mensagemChat");
-  const quickActions = document.getElementById("quickActions");
-  if (!chatBox || !enviarChat || !input) return;
-
-  const user = JSON.parse(localStorage.getItem("usuarioLogado"));
+// ------------------ Funções de Sessão ------------------
+function loadSession() {
+  const user = JSON.parse(localStorage.getItem('ld_session') || 'null');
   if (!user) {
-    window.location.href = "index.html";
+    window.location = 'index.html';
+  }
+}
+
+function logout() {
+  localStorage.removeItem('ld_session');
+  window.location = 'index.html';
+}
+
+document.getElementById('logout')?.addEventListener('click', logout);
+
+// ------------------ LOGIN E REGISTRO ------------------
+if (document.getElementById('form-login')) {
+  let users = JSON.parse(localStorage.getItem('ld_users') || '[]');
+
+  // alternar telas login/registro
+  document.getElementById('open-register').onclick = () => {
+    document.getElementById('form-login').style.display = 'none';
+    document.getElementById('form-register').style.display = 'block';
+  };
+  document.getElementById('back-login').onclick = () => {
+    document.getElementById('form-register').style.display = 'none';
+    document.getElementById('form-login').style.display = 'block';
+  };
+
+  // --- LOGIN ---
+  document.getElementById('form-login').onsubmit = (e) => {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value.trim();
+    const pass = document.getElementById('login-pass').value;
+
+    const user = users.find(u => u.email === email);
+    if (!user) return alert('Usuário não encontrado!');
+    if (user.pass !== btoa(pass)) return alert('Senha incorreta!');
+
+    localStorage.setItem('ld_session', JSON.stringify(user));
+    window.location = 'dashboard.html';
+  };
+
+  // --- REGISTRO ---
+  document.getElementById('form-register').onsubmit = (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById('r-name').value.trim();
+    const email = document.getElementById('r-email').value.trim();
+    const pass = document.getElementById('r-pass').value;
+
+    if (!name || !email || !pass)
+      return alert('Por favor, preencha todos os campos.');
+    if (users.some(u => u.email === email))
+      return alert('E-mail já cadastrado!');
+
+    const newUser = {
+      id: 'u' + Date.now(),
+      name,
+      email,
+      pass: btoa(pass)
+    };
+
+    users.push(newUser);
+    localStorage.setItem('ld_users', JSON.stringify(users));
+    alert('Conta criada com sucesso! Faça login.');
+    window.location = 'index.html';
+  };
+}
+
+// ------------------ AGENDAMENTO ------------------
+function renderDentists() {
+  const sel = document.getElementById('s-dentist');
+  if (!sel) return;
+
+  const dentists = [
+    { id: 'd1', name: 'Dra. Ana' },
+    { id: 'd2', name: 'Dr. Lucas' }
+  ];
+
+  sel.innerHTML = dentists
+    .map(d => `<option value="${d.id}">${d.name}</option>`)
+    .join('');
+}
+
+function agendarConsulta(e) {
+  e.preventDefault();
+
+  const user = JSON.parse(localStorage.getItem('ld_session'));
+  const dentist = document.getElementById('s-dentist').value;
+  const date = document.getElementById('s-date').value;
+  const time = document.getElementById('s-time').value;
+  const conv = document.getElementById('s-conv').checked;
+
+  if (!date || !time) return alert('Selecione uma data e horário.');
+
+  // 🚫 Bloqueio de horário de almoço (12:00 às 14:00)
+  const [hour] = time.split(':').map(Number);
+  if (hour >= 12 && hour < 14) {
+    alert('Não é possível agendar durante o horário de almoço (12h às 14h).');
     return;
   }
 
-  const nome = user.nome.split(" ")[0] || user.nome;
-  let flow = null;
-  let flowData = {};
-
-  /* ===== UTIL ===== */
-  function scrollToBottom() {
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
-  function escapeHtml(text) {
-    return text.replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[m]));
-  }
-  function addUserMessage(text) {
-    const div = document.createElement("div");
-    div.className = "msg user";
-    div.innerHTML = `<strong>${escapeHtml(nome)}:</strong> ${escapeHtml(text)}`;
-    chatBox.appendChild(div);
-    scrollToBottom();
-  }
-  function addBotTyping() {
-    const div = document.createElement("div");
-    div.className = "msg bot typing-msg";
-    div.innerHTML = `<div class="typing"><span></span><span></span><span></span></div>`;
-    chatBox.appendChild(div);
-    scrollToBottom();
-    return div;
-  }
-  function replaceTypingWithBot(divTyping, htmlContent) {
-    const div = document.createElement("div");
-    div.className = "msg bot";
-    div.innerHTML = htmlContent;
-    if (divTyping && divTyping.parentNode) {
-      divTyping.parentNode.replaceChild(div, divTyping);
-    } else {
-      chatBox.appendChild(div);
-    }
-    scrollToBottom();
-  }
-  function botRespond(html, delay = 700) {
-    const typing = addBotTyping();
-    setTimeout(() => replaceTypingWithBot(typing, html), delay);
-  }
-  function createActionButton(text, cls, data) {
-    return `<button class="btn-chat ${cls || ""}" data-action='${JSON.stringify(data)}'>${escapeHtml(text)}</button>`;
-  }
-
-  /* ===== BOTÕES FIXOS ===== */
-  function renderQuickActions() {
-    if (!quickActions) return;
-    quickActions.innerHTML = `
-      ${createActionButton("Agendar", "primary", { cmd: "agendar" })}
-      ${createActionButton("Consultas", "", { cmd: "consultas" })}
-      ${createActionButton("Pagamentos", "", { cmd: "pagamentos" })}
-    `;
-  }
-  renderQuickActions();
-
-  /* ===== FLUXO ===== */
-  function startAgendarFlow() {
-    flow = "agendar";
-    flowData = {};
-    botRespond(`
-      Vamos lá! 😁 Qual procedimento você deseja?<br>
-      <div class="actions-grid" style="margin-top:8px;">
-        ${createActionButton("🦷 Limpeza Dental", "primary", { cmd: "resposta", value: "Limpeza Dental" })}
-        ${createActionButton("🧩 Restauração", "", { cmd: "resposta", value: "Restauração" })}
-        ${createActionButton("💎 Clareamento", "", { cmd: "resposta", value: "Clareamento" })}
-        ${createActionButton("🦷 Canal", "", { cmd: "resposta", value: "Canal" })}
-        ${createActionButton("🧠 Implante", "", { cmd: "resposta", value: "Implante" })}
-        ${createActionButton("😷 Avaliação", "", { cmd: "resposta", value: "Consulta de Avaliação" })}
-        ${createActionButton("Aparelho Ortodôntico", "", { cmd: "resposta", value: "Aparelho Ortodôntico" })}
-      </div>
-    `);
-  }
-
-  function startDentistaFlow() {
-    botRespond(`
-      Perfeito 😄 Agora, com qual dentista você prefere agendar?<br>
-      <div class="actions-grid" style="margin-top:8px;">
-        ${createActionButton("Dr. Lucas", "primary", { cmd: "dentista", value: "Dr. Lucas" })}
-        ${createActionButton("Dra. Ana", "", { cmd: "dentista", value: "Dra. Ana" })}
-      </div>
-    `);
-  }
-
-  function startDataFlow() {
-    botRespond(`
-      Ótimo! 📅 Selecione o dia do atendimento:<br>
-      <div class="actions-grid" style="margin-top:8px;">
-        ${createActionButton("12/11", "", { cmd: "data", value: "12/11" })}
-        ${createActionButton("13/11", "", { cmd: "data", value: "13/11" })}
-        ${createActionButton("14/11", "", { cmd: "data", value: "14/11" })}
-      </div>
-    `);
-  }
-
-  function startConfirmFlow() {
-    botRespond(`
-      Confirma o agendamento?<br>
-      <b>${flowData.procedimento}</b> com <b>${flowData.dentista}</b> no dia <b>${flowData.data}</b> 🗓️<br><br>
-      ${createActionButton("✅ Confirmar", "primary", { cmd: "confirmar" })}
-      ${createActionButton("❌ Cancelar", "", { cmd: "cancelar" })}
-    `);
-  }
-
-  /* ===== HANDLER ===== */
-  chatBox.addEventListener("click", (e) => {
-    const btn = e.target.closest(".btn-chat");
-    if (!btn) return;
-    const data = JSON.parse(btn.dataset.action);
-
-    switch (data.cmd) {
-      case "agendar":
-        startAgendarFlow();
-        break;
-      case "consultas":
-        botRespond("Você ainda não possui consultas marcadas 😅");
-        break;
-      case "pagamentos":
-        botRespond("Nenhum pagamento pendente no momento 💳");
-        break;
-      case "resposta":
-        flowData.procedimento = data.value;
-        addUserMessage(data.value);
-        startDentistaFlow();
-        break;
-      case "dentista":
-        flowData.dentista = data.value;
-        addUserMessage(data.value);
-        startDataFlow();
-        break;
-      case "data":
-        flowData.data = data.value;
-        addUserMessage(data.value);
-        startConfirmFlow();
-        break;
-      case "confirmar":
-        addUserMessage("Confirmar ✅");
-        botRespond(`Perfeito, ${nome}! Seu agendamento foi realizado com sucesso 🎉<br><b>${flowData.procedimento}</b> com <b>${flowData.dentista}</b> no dia <b>${flowData.data}</b>.<br><br>
-        ${createActionButton("📅 Novo Agendamento", "primary", { cmd: "agendar" })}
-        `);
-        flow = null;
-        break;
-      case "cancelar":
-        addUserMessage("Cancelar ❌");
-        botRespond("Tudo bem! Agendamento cancelado. Se quiser, posso marcar outro. 😉<br><br>" +
-          createActionButton("📅 Novo Agendamento", "primary", { cmd: "agendar" })
-        );
-        flow = null;
-        break;
-    }
+  const appts = JSON.parse(localStorage.getItem('ld_appts') || '[]');
+  appts.push({
+    id: 'a' + Date.now(),
+    userId: user.id,
+    userName: user.name,
+    dentistId: dentist,
+    dentistName: document.querySelector(`#s-dentist option[value='${dentist}']`).textContent,
+    date,
+    time,
+    conv,
+    status: 'agendado'
   });
 
-  enviarChat.addEventListener("click", () => {
-    const text = input.value.trim();
-    if (!text) return;
-    addUserMessage(text);
-    input.value = "";
-    if (!flow) botRespond("Escolha uma das opções abaixo 👇");
-  });
+  localStorage.setItem('ld_appts', JSON.stringify(appts));
+  alert('Consulta agendada com sucesso!');
+  window.location = 'consultas.html';
+}
 
-  // Mensagem inicial
-  botRespond(`Olá ${nome}! 👋<br>Sou o assistente virtual da clínica. Como posso te ajudar hoje?`);
-})();
+// ------------------ CONSULTAS ------------------
+function renderConsultas() {
+  const div = document.getElementById('consultas');
+  if (!div) return;
+
+  const user = JSON.parse(localStorage.getItem('ld_session'));
+  const appts = JSON.parse(localStorage.getItem('ld_appts') || '[]').filter(a => a.userId === user.id);
+
+  if (appts.length === 0) {
+    div.innerHTML = '<p>Nenhuma consulta encontrada.</p>';
+    return;
+  }
+
+  div.innerHTML = appts
+    .map(a => `
+      <div class="card">
+        <strong>${a.dentistName}</strong><br>
+        ${a.date} às ${a.time}<br>
+        ${a.conv ? 'Convênio' : 'Particular'} — 
+        <span class="pill ${a.status === 'cancelado' ? 'danger' : 'success'}">${a.status}</span>
+        ${a.status !== 'cancelado' ? `
+          <div class="actions">
+            <button class="btn ghost small" onclick="cancelar('${a.id}')">Cancelar</button>
+          </div>
+        ` : ''}
+      </div>
+    `)
+    .join('');
+}
+
+function cancelar(id) {
+  if (!confirm('Tem certeza que deseja cancelar esta consulta?')) return;
+
+  const appts = JSON.parse(localStorage.getItem('ld_appts') || '[]');
+  const item = appts.find(a => a.id === id);
+  if (item) {
+    item.status = 'cancelado';
+    localStorage.setItem('ld_appts', JSON.stringify(appts));
+    renderConsultas();
+  }
+}
+
+// ------------------ TABELA DE PREÇOS ------------------
+function renderPrecos() {
+  const tbody = document.getElementById('tbody');
+  if (!tbody) return;
+
+  const dados = [
+    ['Limpeza', 120, 90],
+    ['Restauração', 300, 240],
+    ['Canal', 650, 520],
+    ['Clareamento', 800, 650]
+  ];
+
+  tbody.innerHTML = dados
+    .map(p => `
+      <tr>
+        <td>${p[0]}</td>
+        <td>R$ ${p[1]}</td>
+        <td>R$ ${p[2]}</td>
+      </tr>
+    `)
+    .join('');
+}
+
+// ------------------ DASHBOARD ------------------
+function renderDashboard() {
+  const user = JSON.parse(localStorage.getItem('ld_session'));
+  const nameField = document.getElementById('user-name');
+  if (nameField) nameField.textContent = user?.name || '';
+}
