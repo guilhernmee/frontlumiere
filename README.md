@@ -17,7 +17,7 @@ Através deste sistema, cada paciente pode:
 - 💬 **Conversar com o assistente virtual (chatbot)**  
 - 🦷 **Agendar novos procedimentos** diretamente pelo chat ou formulário  
 
-O sistema foi projetado para ser **intuitivo, leve e funcional**, garantindo uma experiência fluida tanto em **celulares** quanto em **computadores**.
+O sistema foi projetado para ser **intuitivo, leve e funcional**, garantindo uma experiência fluida em **computadores**.
 
 ---
 
