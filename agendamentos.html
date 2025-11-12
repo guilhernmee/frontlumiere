@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Agendar Consulta - Lumière Dental</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="script.js"></script>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">LD</div>
+      <div>
+        <div class="clinic-name">Lumière Dental</div>
+        <div class="clinic-sub">Agendamentos</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="dashboard.html">🏠 Dashboard</a>
+      <a href="agendamentos.html" class="active">📅 Agendar</a>
+      <a href="meus-agendamentos.html">📋 Meus Agendamentos</a>
+      <a href="pagamentos.html">💳 Pagamentos</a>
+      <a href="chatbot.html">💬 Chatbot</a>
+    </nav>
+    <button id="logoutBtn" class="btn small">Sair</button>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <h2>Agendar Consulta</h2>
+    </header>
+
+    <div class="card full">
+      <form id="agendarForm">
+        <div class="form-row">
+          <label>Data:</label>
+          <input type="date" id="data" required>
+        </div>
+        <div class="form-row">
+          <label>Hora:</label>
+          <input type="time" id="hora" required>
+        </div>
+        <div class="form-row">
+          <label>Dentista:</label>
+          <select id="dentista" required>
+            <option value="">Selecione</option>
+            <option value="Dr. Lucas">Dr. Lucas</option>
+            <option value="Dra. Ana">Dra. Ana</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Procedimento:</label>
+          <select id="servico" required>
+            <option value="">Selecione</option>
+            <option value="Limpeza Dental">Limpeza Dental</option>
+            <option value="Restauração">Restauração</option>
+            <option value="Canal">Canal</option>
+            <option value="Clareamento">Clareamento</option>
+            <option value="Aparelho Ortodôntico">Aparelho Ortodôntico</option>
+            <option value="Implante">Implante</option>
+            <option value="Consulta de Avaliação">Consulta de Avaliação</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label><input type="checkbox" id="convenio"> Tenho convênio (20% de desconto)</label>
+        </div>
+
+        <div id="detalhesProcedimento" class="card" style="display:none; margin-top:10px;">
+          <p><strong>Valor estimado:</strong> <span id="valorProcedimento"></span></p>
+          <p><strong>Duração média:</strong> <span id="duracaoProcedimento"></span></p>
+        </div>
+
+        <div class="actions">
+          <button class="btn" type="submit">Agendar</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+</body>
+</html>

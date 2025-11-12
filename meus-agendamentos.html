@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Lumière Dental| Meus Agendamentos</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="script.js"></script>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">LD</div>
+      <div>
+        <div class="clinic-name">Lumière Dental</div>
+        <div class="clinic-sub">Clínica Digital</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="dashboard.html">🏠 Dashboard</a>
+      <a href="agendamentos.html">📅 Agendar Consulta</a>
+      <a href="meus-agendamentos.html" class="active">📋 Meus Agendamentos</a>
+      <a href="pagamentos.html">💳 Pagamentos</a>
+      <a href="chatbot.html">💬 Chatbot</a>
+      <a href="#" id="logoutBtn">🚪 Sair</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <h2>Meus Agendamentos</h2>
+    </header>
+
+    <section class="card full">
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Hora</th>
+            <th>Dentista</th>
+            <th>Procedimento</th>
+            <th>Valor</th>
+            <th>Status</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody id="tabelaTodasConsultas"></tbody>
+      </table>
+    </section>
+  </main>
+</div>
+</body>
+</html>

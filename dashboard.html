@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Lumière Dental | Dashboard</title>
+<link rel="stylesheet" href="style.css">
+<script defer src="script.js"></script>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">LD</div>
+      <div>
+        <div class="clinic-name"></div>
+        <div class="clinic-sub">Clínica Digital</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="dashboard.html" class="active">🏠 Dashboard</a>
+      <a href="agendamentos.html">📅 Agendar Consulta</a>
+      <a href="meus-agendamentos.html">📋 Meus Agendamentos</a>
+      <a href="pagamentos.html">💳 Pagamentos</a>
+      <a href="chatbot.html">💬 Chatbot</a>
+      <a href="#" id="logoutBtn">🚪 Sair</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <h2>Bem-vindo(a), <span id="nomeUsuario"></span>!</h2>
+    </header>
+
+    <section class="grid">
+      <div class="card full">
+        <h3>Meus Agendamentos (resumo)</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Procedimento</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaConsultas"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>

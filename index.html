@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Lumière Dental| Login</title>
+<link rel="stylesheet" href="style.css">
+<script defer src="script.js"></script>
+</head>
+<body>
+  <div class="login-container">
+    <div class="card login-card" id="loginCard">
+      <h2>Entrar</h2>
+      <form id="loginForm">
+        <div class="form-row">
+          <label>CPF:</label>
+          <input type="text" id="cpfLogin" placeholder="00000000000" required>
+        </div>
+        <div class="form-row">
+          <label>Senha:</label>
+          <input type="password" id="senhaLogin" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn">Entrar</button>
+        <p class="small">
+          Não tem conta? <a href="#" id="showCadastro">Criar conta</a>
+        </p>
+      </form>
+    </div>
+
+    <div class="card login-card hidden" id="cadastroCard">
+      <h2>Criar Conta</h2>
+      <form id="cadastroForm">
+        <div class="form-row">
+          <label>Nome completo:</label>
+          <input type="text" id="nomeCadastro" required>
+        </div>
+        <div class="form-row">
+          <label>CPF:</label>
+          <input type="text" id="cpfCadastro" required>
+        </div>
+        <div class="form-row">
+          <label>Email:</label>
+          <input type="email" id="emailCadastro" required>
+        </div>
+        <div class="form-row">
+          <label>Telefone:</label>
+          <input type="tel" id="telCadastro" required>
+        </div>
+        <div class="form-row">
+          <label>Senha:</label>
+          <input type="password" id="senhaCadastro" required>
+        </div>
+        <button type="submit" class="btn">Cadastrar</button>
+        <p class="small">
+          Já tem conta? <a href="#" id="showLogin">Fazer login</a>
+        </p>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Lumière Dental | Chatbot</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="script.js"></script>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">LD</div>
+      <div>
+        <div class="clinic-name">Lumière Dental</div>
+        <div class="clinic-sub">Clínica Digital</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <a href="dashboard.html">🏠 Dashboard</a>
+      <a href="agendamentos.html">📅 Agendar Consulta</a>
+      <a href="meus-agendamentos.html">📋 Meus Agendamentos</a>
+      <a href="pagamentos.html">💳 Pagamentos</a>
+      <a href="chatbot.html" class="active">💬 Chatbot</a>
+      <a href="#" id="logoutBtn">🚪 Sair</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <header class="topbar"><h2>Chatbot Lumière Dental</h2></header>
+    <div class="card full" style="display:flex; flex-direction:column; height:75vh;">
+      <div id="chatBox"></div>
+      <div class="form-row" style="display:flex; margin-top:10px; align-items:center;">
+        <input type="text" id="mensagemChat" placeholder="Digite sua mensagem...">
+        <button class="btn small" id="enviarChat">Enviar</button>
+      </div>
+    </div>
+  </main>
+</div>
+</body>
+</html>
