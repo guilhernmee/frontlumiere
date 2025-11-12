@@ -96,7 +96,7 @@ Exemplo de comandos do chatbot:
 
 ✅ **Concluído**  
 📆 Entrega final realizada  
-📱 Compatível com dispositivos móveis  
+📱 Compatível com dispositivos em desktop
 
 ---
 
